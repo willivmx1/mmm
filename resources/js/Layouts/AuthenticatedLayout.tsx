@@ -11,7 +11,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                     <div>
                         <p className="w-full text-center font-extrabold mt-5 mb-5 text-xl uppercase ">My Money Manager</p>
                         <div className="flex flex-col border-none shadow-none gap-2">
-                            <MenuElement title="Tableau de bord" icon={<Database size={24}/>} active></MenuElement>
+                            <MenuElement title="Tableauuu de bord" icon={<Database size={24}/>} active></MenuElement>
                             <MenuElement title="Statistiques" icon={<BarChart2 size={24}/>}></MenuElement>
                         </div>
                     </div>
