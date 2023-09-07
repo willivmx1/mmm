@@ -16,19 +16,6 @@
         @viteReactRefresh
         @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
         @inertiaHead
-        <style>
-            .parent {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(2, 1fr);
-                grid-column-gap: 0px;
-                grid-row-gap: 0px;
-            }
-
-            .side-bar { grid-area: 1 / 1 / 6 / 2; }
-            .nav-bar { grid-area: 1 / 2 / 2 / 3; }
-
-        </style>
     </head>
     <body class="">
         @inertia
