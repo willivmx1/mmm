@@ -21,8 +21,15 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/history', function () {
-    return Inertia::render('History');
+    $operations = \App\Models\Operation::all();
+    $categories = \App\Models\Category::all();
+    return Inertia::render('History', ['operations' => $operations, 'categories' => $categories]);
 })->middleware(['auth', 'verified'])->name('history');
+
+Route::get('/statistics', function () {
+
+    return Inertia::render('Statistics');
+})->middleware(['auth', 'verified'])->name('statistics');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -17,7 +17,12 @@ class OperationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->words(rand(2, 5), true),
+            'description' => fake()->paragraph(),
+            'amount' => fake()->numberBetween(1, 1000000),
+            'type' => fake()->randomElement(['income', 'outcome']),
+            'created_at' => now(),
+            'category_id' => fake()->numberBetween(1, 50),
         ];
     }
 }

@@ -17,7 +17,10 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->words(rand(2, 5), true),
+            'description' => fake()->paragraph(),
+            'created_at' => now(),
+            'user_id' => fake()->numberBetween(1, 50),
         ];
     }
 }
