@@ -17,7 +17,9 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Dashboard');
+    $categories = \App\Models\Category::all();
+    $operations = \App\Models\Operation::all();
+    return Inertia::render('Dashboard', ['categories' => $categories, 'operations' => $operations]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/history', function () {
