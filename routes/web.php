@@ -29,8 +29,9 @@ Route::get('/history', function () {
 })->middleware(['auth', 'verified'])->name('history');
 
 Route::get('/statistics', function () {
-
-    return Inertia::render('Statistics');
+    $operations = \App\Models\Operation::all();
+    $categories = \App\Models\Category::all();
+    return Inertia::render('Statistics', ['operations' => $operations, 'categories' => $categories]);
 })->middleware(['auth', 'verified'])->name('statistics');
 
 Route::middleware('auth')->group(function () {

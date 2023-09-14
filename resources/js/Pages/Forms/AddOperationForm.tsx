@@ -58,6 +58,8 @@ export default function AddOperationForm({auth, categories}: any) {
         },
     })
 
+    const isFormFilled = form.watch('title') && form.watch('description') && form.watch('amount') && form.watch('type')
+
     categories.sort((a: any, b: any) => b.id - a.id)
     async function onSubmit(values: z.infer<typeof formSchema>) {
         await axios.post('/api/operations', {
@@ -79,8 +81,7 @@ export default function AddOperationForm({auth, categories}: any) {
                 description: error.message,
             })
         })
-
-
+        form.reset()
     }
 
     return (
@@ -208,7 +209,7 @@ export default function AddOperationForm({auth, categories}: any) {
                                                                 </CommandItem>
                                                             </PopoverTrigger>
                                                             <PopoverContent
-                                                                className="translate-x-[90%]"><AddCategoryForm
+                                                                className="lg:translate-x-[90%] lg:-translate-y-[-50%]"><AddCategoryForm
                                                                 auth={auth}/></PopoverContent>
                                                         </Popover>
                                                     </div>
@@ -239,7 +240,7 @@ export default function AddOperationForm({auth, categories}: any) {
                         )}
                     />
                     <DialogFooter>
-                        <Button type="submit" className="text-xs p-2.5 mt-3">Enregistrer</Button>
+                        <Button type="submit" className="text-xs p-2.5 mt-3" disabled={!isFormFilled}>Enregistrer</Button>
                     </DialogFooter>
 
             </form>

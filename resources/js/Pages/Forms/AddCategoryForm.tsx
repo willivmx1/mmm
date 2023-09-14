@@ -54,10 +54,10 @@ export default function AddCategoryForm({auth}: any){
                 description: error.message,
             })
         })
-
-        document.getElementById('app')?.click()
-
+        form.reset()
     }
+
+    const isFormFilled = form.watch('title') && form.watch('description')
 
     return (
         <Form {...form}>
@@ -93,7 +93,7 @@ export default function AddCategoryForm({auth}: any){
                     )}
                 />
                 <DialogFooter>
-                    <Button type="submit" className="text-xs p-2.5">Enregistrer</Button>
+                    <Button type="submit" className="text-xs p-2.5" disabled={!isFormFilled}>Enregistrer</Button>
                 </DialogFooter>
             </form>
         </Form>

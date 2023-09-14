@@ -22,9 +22,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/Components/ui/tooltip"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+
 
 export default function Dashboard({auth, categories, operations}: any) {
-
     const formatAmount = (amount: number) => {
         return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " CFA";
     }
@@ -160,7 +161,7 @@ export default function Dashboard({auth, categories, operations}: any) {
                 className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                 <ThumbsUp className="text-green-500 h-4 w-4"/>
                 <AlertTitle className="font-bold">Bien joué !</AlertTitle>
-                <AlertDescription className="text-sm">Vous gagnez plus que vous ne dépensez, continuez sur cette route.</AlertDescription>
+                <AlertDescription className="text-sm">Vous gagnez plus que vous ne dépensez, continuez sur cette lancée.</AlertDescription>
             </Alert>)
     }
     const getYesterdaysDate = () => {
@@ -172,6 +173,29 @@ export default function Dashboard({auth, categories, operations}: any) {
     const truncateFloat = (number: number) => {
         return Math.trunc(number * 100) / 100;
     }
+
+    const getData = () => {
+        let data = [];
+        for (let i = 0; i < 7; i++) {
+            let day = new Date();
+            day.setDate(day.getDate() - i);
+            let income = 0;
+            let outcome = 0;
+            for (let j = 0; j < operations.length; j++) {
+                if (formatDate(operations[j].created_at) === formatDate(day)) {
+                    if (operations[j].type === "income") {
+                        income += operations[j].amount;
+                    } else {
+                        outcome += operations[j].amount;
+                    }
+                }
+            }
+            data.push({name: formatDate(day), entrees: income, sorties: outcome});
+        }
+        return data;
+    }
+
+    const data = getData();
 
     return (
         <AuthenticatedLayout
@@ -185,53 +209,76 @@ export default function Dashboard({auth, categories, operations}: any) {
             }]}
         >
             <Head title="Dashboard"/>
-            <div className="row gap-6 justify-center">
-                {displayCards(
-                    "Solde actuel",
-                    <DollarSign/>,
-                    <h1 className="text-3xl font-bold">{formatAmount(totalOperations())}</h1>,
-                    <p className="text-xs font-normal"><span className={`${getProgressionOperation() >=0 ? "text-green-500" : "text-red-500"}`}>{getProgressionOperation() >= 0 ? `+${getProgressionOperation()}`: getProgressionOperation()}%</span> par
-                        rapport <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger><span className="underline">à hier</span></TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{formatAmount(getYesterdayTotalOperations())}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    </p>
-                )}
-                {displayCards(
-                    "Total des entrées",
-                    <ArrowLeftFromLine/>,
-                    <h1 className="text-3xl font-bold">{formatAmount(totalIncome())}</h1>,
-                    <p className="text-xs font-normal"><span className={`${getProgressionIncomeOutcomeByMonth('income') >=0 ? "text-green-500" : "text-red-500"}`}>{getProgressionIncomeOutcomeByMonth('income') >= 0 ? `+${getProgressionIncomeOutcomeByMonth('income')}`: getProgressionIncomeOutcomeByMonth('income')}%</span> par
-                        rapport <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger><span className="underline">au mois dernier</span></TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{formatAmount(getLastMonthTotalIncomeOutcome('income'))}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider></p>
-                )}
-                {displayCards(
-                    "Total des sorties",
-                    <ArrowRightFromLine/>,
-                    <h1 className="text-3xl font-bold">{formatAmount(totalOutcome())}</h1>,
-                    <p className="text-xs font-normal"><span className={`${getProgressionIncomeOutcomeByMonth('outcome') <= 0 ? "text-green-500" : "text-red-500"}`}>{getProgressionIncomeOutcomeByMonth('outcome') >= 0 ? `+${getProgressionIncomeOutcomeByMonth('outcome')}`: getProgressionIncomeOutcomeByMonth('outcome')}%</span> par
-                        rapport <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger><span className="underline">au mois dernier</span></TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{formatAmount(getLastMonthTotalIncomeOutcome('outcome'))}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider></p>
-                )}
-            </div>
-            <div className="row mt-4 w-full flex justify-center items-center">
-                <div className="col-md-12 col-lg-8">{getAlert()}</div>
+            <div className="w-full flex flex-col gap-4">
+
+                <div className="row w-full flex justify-center items-center">
+                    <div className="col-md-12 col-lg-8">{getAlert()}</div>
+                </div>
+                <div className="row gap-6 justify-center">
+                    {displayCards(
+                        "Solde actuel",
+                        <DollarSign/>,
+                        <h1 className="text-3xl font-bold">{formatAmount(totalOperations())}</h1>,
+                        <p className="text-xs font-normal"><span className={`${getProgressionOperation() >=0 ? "text-green-500" : "text-red-500"}`}>{getProgressionOperation() >= 0 ? `+${getProgressionOperation()}`: getProgressionOperation()}%</span> par
+                            rapport <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger><span className="underline">à hier</span></TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{formatAmount(getYesterdayTotalOperations())}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </p>
+                    )}
+                    {displayCards(
+                        "Total des entrées",
+                        <ArrowLeftFromLine/>,
+                        <h1 className="text-3xl font-bold">{formatAmount(totalIncome())}</h1>,
+                        <p className="text-xs font-normal"><span className={`${getProgressionIncomeOutcomeByMonth('income') >=0 ? "text-green-500" : "text-red-500"}`}>{getProgressionIncomeOutcomeByMonth('income') >= 0 ? `+${getProgressionIncomeOutcomeByMonth('income')}`: getProgressionIncomeOutcomeByMonth('income')}%</span> par
+                            rapport <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger><span className="underline">au mois dernier</span></TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{formatAmount(getLastMonthTotalIncomeOutcome('income'))}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider></p>
+                    )}
+                    {displayCards(
+                        "Total des sorties",
+                        <ArrowRightFromLine/>,
+                        <h1 className="text-3xl font-bold">{formatAmount(totalOutcome())}</h1>,
+                        <p className="text-xs font-normal"><span className={`${getProgressionIncomeOutcomeByMonth('outcome') <= 0 ? "text-green-500" : "text-red-500"}`}>{getProgressionIncomeOutcomeByMonth('outcome') >= 0 ? `+${getProgressionIncomeOutcomeByMonth('outcome')}`: getProgressionIncomeOutcomeByMonth('outcome')}%</span> par
+                            rapport <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger><span className="underline">au mois dernier</span></TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{formatAmount(getLastMonthTotalIncomeOutcome('outcome'))}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider></p>
+                    )}
+                </div>
+                <div className="row w-full flex justify-center items-center">
+                    <BarChart
+                        width={1300}
+                        height={350}
+                        data={data}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="1 1" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Legend />
+                        <Bar dataKey="entrees" fill="#3fcc73" />
+                        <Bar dataKey="sorties" fill="#ef4444" />
+                    </BarChart>
+                </div>
             </div>
 
         </AuthenticatedLayout>
